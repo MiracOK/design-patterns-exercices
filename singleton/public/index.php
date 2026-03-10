@@ -1,7 +1,15 @@
 <?php
 require('../vendor/autoload.php');
 
+use App\Config;
 
-# TODO: Récuperer une instance de Config
-# Afficher une valeur contenu dans config.php
-# Récupérer une seconde instance de Config et vérifié que les deux instances sont identiques
+$config1 = Config::getInstance();
+
+$db = $config1->get('db');
+echo "DB host : {$db['host']}\n";
+echo "API key : {$config1->get('apiKey')}\n";
+echo "Debug   : " . ($config1->get('debug') ? 'true' : 'false') . "\n\n";
+
+$config2 = Config::getInstance();
+
+var_dump($config1 === $config2); 
