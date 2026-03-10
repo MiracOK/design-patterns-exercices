@@ -2,7 +2,7 @@
 
 namespace App;
 
-class MySQLQueryBuilder implements QueryBuilderInterface
+class LiteralBuilder implements QueryBuilderInterface
 {
     private array $select = [];
     private array $from   = [];
@@ -22,19 +22,20 @@ class MySQLQueryBuilder implements QueryBuilderInterface
 
     public function where(string $field, string $operator, $value): self
     {
-        $this->where[] = "$field $operator '" . addslashes((string) $value) . "'";
+        $this->where[] = "$field $operator $value";
         return $this;
     }
 
     public function build(): string
     {
-        $sql = 'SELECT ' . (empty($this->select) ? '*' : implode(', ', $this->select));
-        $sql .= ' FROM ' . implode(', ', $this->from);
+        $fields  = empty($this->select) ? 'tous les champs' : implode(', ', $this->select);
+        $tables  = implode(', ', $this->from);
+        $sentence = "Je sélectionne les champs $fields de la table $tables";
 
         if (!empty($this->where)) {
-            $sql .= ' WHERE ' . implode(' AND ', $this->where);
+            $sentence .= ' où ' . implode(' et ', $this->where);
         }
 
-        return $sql . ';';
+        return $sentence . '.';
     }
 }
